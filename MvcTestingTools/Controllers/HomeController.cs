@@ -1,4 +1,5 @@
 ﻿using MvcTestingTools.Models;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,12 @@ namespace MvcTestingTools.Controllers
 
         public ActionResult Index()
         {
-            LinqValueCalculator calc = new LinqValueCalculator();
+            IKernel ninjectKernel = new StandardKernel();
+            ninjectKernel.Bind<IValueCalculator>().To<LinqValueCalculator>();
+
+            //IValueCalculator calc = new LinqValueCalculator();
+            IValueCalculator calc = ninjectKernel.Get<LinqValueCalculator>();
+
             ShoppingCart cart = new ShoppingCart(calc) { Products = products };
             decimal totalValue = cart.CalculateProductTotal();
             return View(totalValue);
